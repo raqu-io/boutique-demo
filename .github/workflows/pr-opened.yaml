@@ -80,7 +80,7 @@ jobs:
           context: src/${{ matrix.service }}
           file: src/${{ matrix.service }}/Dockerfile
           tags: ${{ steps.meta.outputs.tags }}
-  deploy_all:
+  deploy:
     runs-on: [ubuntu-latest]
     container:
       image: raquio/deployer:v0.0.15
