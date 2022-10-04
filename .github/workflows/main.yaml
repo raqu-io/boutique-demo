@@ -89,7 +89,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
 deploy:
   runs-on: [ubuntu-latest]
-  container: raquio/deployer:v0.0.1
+  container: raquio/deployer:v0.0.16
   needs: build-images
   strategy:
     matrix:
