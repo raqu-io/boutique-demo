@@ -23,7 +23,6 @@ jobs:
     container:
       image: raquio/deployer:latest
       options: --user root
-    needs: [build-images, init]
     strategy:
       matrix:
         service: ["adservice", "cartservice", "checkoutservice", "currencyservice", "emailservice", "frontend", "paymentservice", "productcatalogservice", "recommendationservice", "shippingservice"]

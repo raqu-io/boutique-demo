@@ -77,7 +77,7 @@ jobs:
     strategy:
       matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix-services) }}
       fail-fast: true
-      if: ${{ fromJson(needs.generate-matrix.outputs.matrix-services).include[0] }}
+    if: ${{ fromJson(needs.generate-matrix.outputs.matrix-services).include[0] }}
     steps:
       -
         name: Checkout
