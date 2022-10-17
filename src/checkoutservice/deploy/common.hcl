@@ -10,3 +10,4 @@ upstreams = {
     "currency"        = 5055
     "cart"            = 5056
 }
+
