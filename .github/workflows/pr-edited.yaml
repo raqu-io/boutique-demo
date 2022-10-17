@@ -26,6 +26,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Get short SHA for tagging
+        id: meta
         run: echo "sha_short=sha-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
   generate-matrix:
     name: Generate job matrices
