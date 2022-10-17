@@ -32,5 +32,7 @@ jobs:
         timeout-minutes: 10
         run: |
             nomad stop -purge ${{ matrix.service }}-pr${{ github.event.pull_request.number }}
+            consul config delete -kind service-splitter -name ${{ matrix.service }}-pr${{ github.event.pull_request.number }}
+            consul config delete -kind service-resolver -name ${{ matrix.service }}-pr${{ github.event.pull_request.number }}
             consul config delete -kind service-intentions -name ${{ matrix.service }}-pr${{ github.event.pull_request.number }}
             consul config delete -kind service-defaults -name ${{ matrix.service }}-pr${{ github.event.pull_request.number }}

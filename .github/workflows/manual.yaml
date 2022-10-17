@@ -1,0 +1,70 @@
+# Copyright 2022 Raqu LTD
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+name: "Manual Release"
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag version for services to be deployed'
+        required: true
+      services:
+        description: 'Service to be deployed'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - adservice
+          - cartservice
+          - checkoutservice
+          - currencyservice
+          - emailservice
+          - frontend
+          - paymentservice
+          - productcatalogservice
+          - recommendationservice
+          - shippingservice
+
+jobs:
+  deploy:
+    runs-on: [ ubuntu-latest ]
+    container:
+      image: raquio/deployer:latest
+      options: --user root
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.PACK_REGISTRY_DEPLOY_KEY }}
+      - name: deploy
+        timeout-minutes: 10
+        run: |
+          git config --global --add safe.directory /__w/boutique-demo/boutique-demo
+          deployer --conf src/${{ inputs.service }}/deploy/common.hcl \
+                   --conf src/${{ inputs.service }}/deploy/prod.hcl \
+                   --nomad-addr ${{ secrets.NOMAD_ADDR }} \
+                   --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
+                   --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
+                   --extra-vars="--var=service_version=${{ inputs.tag }}"
+
+          if [ "${{ inputs.service }}" == "cartservice" ]; then
+            deployer --conf src/${{ inputs.service }}/deploy/redis.hcl \
+                             --nomad-addr ${{ secrets.NOMAD_ADDR }} \
+                             --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
+                             --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }}
+          fi

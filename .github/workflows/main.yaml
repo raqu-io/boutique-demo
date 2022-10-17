@@ -94,7 +94,7 @@ jobs:
     needs: [ generate-matrix, build-images ]
     runs-on: [ ubuntu-latest ]
     container:
-      image: raquio/deployer:v0.0.18
+      image: raquio/deployer:latest
       options: --user root
     strategy:
       matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix-services) }}
