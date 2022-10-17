@@ -18,6 +18,13 @@ on:
   pull_request:
     types: [synchronize]
 jobs:
+  init:
+    runs-on: [ ubuntu-latest ]
+    outputs:
+      tag: ${{ steps.meta.outputs.sha_short }}
+    steps:
+      - name: Get short SHA for tagging
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
   generate-matrix:
     name: Generate job matrices
     runs-on: ubuntu-latest
@@ -30,7 +37,7 @@ jobs:
         with:
           pattern: src/(?P<service>[^/]+)
   build-images:
-    needs: [generate-matrix]
+    needs: [generate-matrix, init]
     runs-on: [ubuntu-latest]
     strategy:
       matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix-services) }}
@@ -57,15 +64,6 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       -
-        name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: |
-            raquio/${{ matrix.service }}
-          tags: |
-            type=sha
-      -
         uses: docker/build-push-action@v3
         name: Build
         timeout-minutes: 20
@@ -73,9 +71,9 @@ jobs:
           push: true
           context: src/${{ matrix.service }}
           file: src/${{ matrix.service }}/Dockerfile
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: raquio/${{ matrix.service }}:${{ needs.init.outputs.tag }}
   deploy:
-    needs: [generate-matrix, build-images]
+    needs: [generate-matrix, build-images, init]
     runs-on: [ubuntu-latest]
     container:
       image: raquio/deployer:v0.0.18
@@ -104,11 +102,12 @@ jobs:
                      --nomad-addr ${{ secrets.NOMAD_ADDR }} \
                      --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
                      --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
-                     --extra-vars="--var=service_version=$TAG"
+                     --extra-vars="--var=service_version=${{ needs.init.outputs.tag }} --var=service_name_stub=-pr${{ github.event.pull_request.number }}"
 
             if [ "${{ matrix.service }}" == "cartservice" ]; then
               deployer --conf src/${{ matrix.service }}/deploy/redis.hcl \
                                --nomad-addr ${{ secrets.NOMAD_ADDR }} \
                                --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
-                               --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }}
+                               --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
+                               --extra-vars="--var=service_name_stub=-pr${{ github.event.pull_request.number }}"
             fi

@@ -18,6 +18,14 @@ on:
   pull_request:
     types: [opened, reopened]
 jobs:
+  init:
+    runs-on: [ubuntu-latest]
+    outputs:
+      tag: ${{ steps.meta.outputs.sha_short }}
+    steps:
+      -
+        name: Get short SHA for tagging
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
   code-tests:
     runs-on: [ubuntu-latest]
     strategy:
@@ -37,7 +45,7 @@ jobs:
             go test
   build-images:
     runs-on: [ubuntu-latest]
-    needs: code-tests
+    needs: [code-tests, init]
     strategy:
       matrix:
         service: ["adservice", "cartservice", "checkoutservice", "currencyservice", "emailservice", "frontend", "paymentservice", "productcatalogservice", "recommendationservice", "shippingservice"]
@@ -63,15 +71,6 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       -
-        name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: |
-            raquio/${{ matrix.service }}
-          tags: |
-            type=sha
-      -
         uses: docker/build-push-action@v3
         name: Build
         timeout-minutes: 20
@@ -79,13 +78,13 @@ jobs:
           push: true
           context: src/${{ matrix.service }}
           file: src/${{ matrix.service }}/Dockerfile
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: raquio/${{ matrix.service }}:${{ needs.init.outputs.tag }}
   deploy_all:
     runs-on: [ubuntu-latest]
     container:
       image: raquio/deployer:v0.0.18
       options: --user root
-    needs: build-images
+    needs: [build-images, init]
     strategy:
       matrix:
         service: ["adservice", "cartservice", "checkoutservice", "currencyservice", "emailservice", "frontend", "paymentservice", "productcatalogservice", "recommendationservice", "shippingservice"]
@@ -109,11 +108,12 @@ jobs:
                      --nomad-addr ${{ secrets.NOMAD_ADDR }} \
                      --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
                      --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
-                     --extra-vars="--var=service_version=$TAG"
+                     --extra-vars="--var=service_version=${{ needs.init.outputs.tag }} --var=service_name_stub=-pr${{ github.event.pull_request.number }}"
 
             if [ "${{ matrix.service }}" == "cartservice" ]; then
               deployer --conf src/${{ matrix.service }}/deploy/redis.hcl \
                                --nomad-addr ${{ secrets.NOMAD_ADDR }} \
                                --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
-                               --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }}
+                               --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
+                               --extra-vars="--var=service_name_stub=-pr${{ github.event.pull_request.number }}"
             fi
