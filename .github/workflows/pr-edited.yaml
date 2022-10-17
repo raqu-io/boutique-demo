@@ -23,8 +23,10 @@ jobs:
     outputs:
       tag: ${{ steps.meta.outputs.sha_short }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Get short SHA for tagging
-        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+        run: echo "sha_short=$(git rev-parse --short HEAD) >> $GITHUB_OUTPUT"
   generate-matrix:
     name: Generate job matrices
     runs-on: ubuntu-latest
