@@ -91,7 +91,7 @@ jobs:
           file: src/${{ matrix.service }}/Dockerfile
           tags: raquio/${{ matrix.service }}:${{ needs.generate-release.outputs.tag }}
   deploy:
-    needs: [ generate-matrix, build-images ]
+    needs: [ generate-matrix, generate-release, build-images ]
     runs-on: [ ubuntu-latest ]
     container:
       image: raquio/deployer:latest
