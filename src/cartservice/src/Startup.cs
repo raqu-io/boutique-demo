@@ -26,7 +26,7 @@ namespace cartservice
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            string redisAddress = Configuration["REDIS_ADDR"];
+            string redisAddress = Configuration["REDIS_SERVICE_ADDR"];
             if (!string.IsNullOrEmpty(redisAddress))
             {
                 services.AddStackExchangeRedisCache(options =>

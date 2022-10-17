@@ -1,7 +1,4 @@
-service_name    = "product-catalog"
-service_port    = 5050
-service_repo    = "raquio/productcatalogservice"
-service_count   = 1
+service_count   = 2
 
 resources = {
     cpu    = 100
