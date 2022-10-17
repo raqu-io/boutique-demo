@@ -73,6 +73,12 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       -
+        name: Use docker layer caching
+        uses: satackey/action-docker-layer-caching@v0.0.11
+        # Ignore the failure of a step and avoid terminating the job.
+        continue-on-error: true
+
+      -
         uses: docker/build-push-action@v3
         name: Build
         timeout-minutes: 20
@@ -110,7 +116,7 @@ jobs:
                      --nomad-addr ${{ secrets.NOMAD_ADDR }} \
                      --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
                      --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
-                     --stub -pr${{ github.event.pull_request.number }} \
+                     --stub "-pr${{ github.event.pull_request.number }}" \
                      --extra-vars="--var=service_version=${{ needs.init.outputs.tag }}"
 
             if [ "${{ matrix.service }}" == "cartservice" ]; then
@@ -118,5 +124,5 @@ jobs:
                                --nomad-addr ${{ secrets.NOMAD_ADDR }} \
                                --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
                                --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
-                               --stub=-pr${{ github.event.pull_request.number }}
+                               --stub "-pr${{ github.event.pull_request.number }}"
             fi
