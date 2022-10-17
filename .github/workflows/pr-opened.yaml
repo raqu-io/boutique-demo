@@ -73,10 +73,13 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       -
-        name: Use docker layer caching
-        uses: satackey/action-docker-layer-caching@v0.0.11
-        # Ignore the failure of a step and avoid terminating the job.
-        continue-on-error: true
+        name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-single-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-single-buildx
 
       -
         uses: docker/build-push-action@v3
@@ -87,6 +90,12 @@ jobs:
           context: src/${{ matrix.service }}
           file: src/${{ matrix.service }}/Dockerfile
           tags: raquio/${{ matrix.service }}:${{ needs.init.outputs.tag }}
+
+      -
+        name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
   deploy_all:
     runs-on: [ubuntu-latest]
     container:
