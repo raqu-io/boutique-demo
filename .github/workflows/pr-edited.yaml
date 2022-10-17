@@ -111,7 +111,7 @@ jobs:
                      --nomad-addr ${{ secrets.NOMAD_ADDR }} \
                      --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
                      --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
-                     --stub "-pr${{ github.event.pull_request.number }}" \
+                     --stub="-pr${{ github.event.pull_request.number }}" \
                      --extra-vars="--var=service_version=${{ needs.init.outputs.tag }}"
 
             if [ "${{ matrix.service }}" == "cartservice" ]; then
@@ -119,5 +119,5 @@ jobs:
                                --nomad-addr ${{ secrets.NOMAD_ADDR }} \
                                --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
                                --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
-                               --stub "-pr${{ github.event.pull_request.number }}"
+                               --stub="-pr${{ github.event.pull_request.number }}"
             fi
