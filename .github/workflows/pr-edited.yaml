@@ -83,6 +83,8 @@ jobs:
           context: src/${{ matrix.service }}
           file: src/${{ matrix.service }}/Dockerfile
           tags: raquio/${{ matrix.service }}:${{ needs.init.outputs.tag }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
 
       - name: Move cache
         run: |
