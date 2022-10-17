@@ -1,4 +1,4 @@
-service_count   = 2
+service_count   = 1
 
 resources = {
     cpu    = 100

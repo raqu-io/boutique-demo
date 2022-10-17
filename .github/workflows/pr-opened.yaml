@@ -83,7 +83,7 @@ jobs:
   deploy_all:
     runs-on: [ubuntu-latest]
     container:
-      image: raquio/deployer:v0.0.15
+      image: raquio/deployer:v0.0.18
       options: --user root
     needs: build-images
     strategy:
@@ -104,7 +104,8 @@ jobs:
         run: |
             git config --global --add safe.directory /__w/boutique-demo/boutique-demo
             TAG="sha-$(git rev-parse --short HEAD)"
-            deployer --conf src/${{ matrix.service }}/deploy/prod.hcl \
+            deployer --conf src/${{ matrix.service }}/deploy/common.hcl \
+                     --conf src/${{ matrix.service }}/deploy/dev.hcl \
                      --nomad-addr ${{ secrets.NOMAD_ADDR }} \
                      --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
                      --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \

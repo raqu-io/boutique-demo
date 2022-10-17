@@ -1,7 +1,4 @@
-service_name    = "currency"
-service_port    = 5050
-service_repo    = "raquio/currencyservice"
-service_count   = 1
+service_count   = 2
 
 resources = {
     cpu    = 100
