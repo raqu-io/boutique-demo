@@ -17,6 +17,10 @@ name: "Pull Request Closed - Continuous Release"
 on:
   pull_request:
     types: [closed]
+env:
+  NOMAD_ADDR: ${{ secrets.NOMAD_ADDR }}
+  CONSUL_HTTP_ADDR: ${{ secrets.CONSUL_HTTP_ADDR }}
+  CONSUL_HTTP_TOKEN: ${{ secrets.CONSUL_HTTP_TOKEN }}
 jobs:
   cleanup:
     runs-on: [ubuntu-latest]
