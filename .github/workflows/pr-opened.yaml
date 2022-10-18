@@ -137,3 +137,13 @@ jobs:
                                --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
                                --stub="-pr${{ github.event.pull_request.number }}"
             fi
+  comment:
+    runs-on: ubuntu-latest
+    needs: [ deploy_all ]
+    steps:
+      - name: Comment PR
+        uses: thollander/actions-comment-pull-request@v1
+        with:
+          message: |
+            App is available at: frontend-pr${{ github.event.pull_request.number}}.dev.thecheese.company
+          pr_number: ${{ github.event.pull_request.number }}
