@@ -20,6 +20,7 @@ on:
       tag:
         description: 'Tag version for services to be deployed'
         required: true
+        default: v0.0.0
       services:
         description: 'Service to be deployed'
         required: true
@@ -62,8 +63,10 @@ jobs:
     steps:
       - name: Woop
         run: |
-          echo "matrix1: ${{ fromJson(needs.generate-matrix.outputs.matrix-services) }}"
           echo "matrix2: ${{ needs.generate-matrix.outputs.matrix-services }}"
+          echo "matrix1: ${{ fromJson(needs.generate-matrix.outputs.matrix-services) }}"
+          echo "matrix1: ${{ fromJson(needs.generate-matrix.outputs.matrix-services)[0]['service'] }}"
+
   deploy:
     needs: [generate-matrix]
     runs-on: [ ubuntu-latest ]
