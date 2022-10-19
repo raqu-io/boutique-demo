@@ -40,23 +40,6 @@ on:
           - shippingservice
 
 jobs:
-  generate-matrix:
-    name: Generate job matrices
-    runs-on: ubuntu-latest
-    outputs:
-      matrix-services: ${{ steps.set-matrix.outputs.matrix }}
-    steps:
-      - name: Generate matrix | Services
-        id: set-matrix
-        run: |
-          echo "::set-output name=matrix::[{\"project\":\"foo\",\"config\":\"Debug\"},{\"project\":\"bar\",\"config\":\"Release\"}]"
-
-          if [[ "${{ inputs.services }}" == "all" ]]; then
-            echo 'SERVICES_MATRIX=[{"service": "adservice"}, {"service": "cartservice"}, {"service": "checkoutservice"}, {"service": "currencyservice"}, {"service": "emailservice"}, {"service": "frontend"}, {"service": "paymentservice"}, {"service": "productcatalogservice"}, {"service": "recommendationservice"}, {"service": "shippingservice"}]' >> $GITHUB_OUTPUT
-          else
-            echo 'SERVICES_MATRIX=["${{ inputs.services }}"]' >> $GITHUB_OUTPUT
-          fi
-          exit 0
   deploy:
     runs-on: [ ubuntu-latest ]
     container:
@@ -76,19 +59,18 @@ jobs:
         timeout-minutes: 10
         run: |
           if [[ "${{ inputs.services }}" == "all" || "${{ inputs.services }}" == "${{ matrix.service }}" ]]; then
-          echo "${{ matrix.service }}"
+            git config --global --add safe.directory /__w/boutique-demo/boutique-demo
+            deployer --conf src/${{ matrix.service }}/deploy/common.hcl \
+                     --conf src/${{ matrix.service }}/deploy/prod.hcl \
+                     --nomad-addr ${{ secrets.NOMAD_ADDR }} \
+                     --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
+                     --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
+                     --extra-vars="--var=service_version=${{ inputs.tag }}"
+
+            if [ "${{ matrix.service }}" == "cartservice" ]; then
+              deployer --conf src/${{ matrix.service }}/deploy/redis.hcl \
+                               --nomad-addr ${{ secrets.NOMAD_ADDR }} \
+                               --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
+                               --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }}
+            fi
           fi
-#          git config --global --add safe.directory /__w/boutique-demo/boutique-demo
-#          deployer --conf src/${{ matrix.service }}/deploy/common.hcl \
-#                   --conf src/${{ matrix.service }}/deploy/prod.hcl \
-#                   --nomad-addr ${{ secrets.NOMAD_ADDR }} \
-#                   --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
-#                   --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
-#                   --extra-vars="--var=service_version=${{ inputs.tag }}"
-#
-#          if [ "${{ matrix.service }}" == "cartservice" ]; then
-#            deployer --conf src/${{ matrix.service }}/deploy/redis.hcl \
-#                             --nomad-addr ${{ secrets.NOMAD_ADDR }} \
-#                             --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
-#                             --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }}
-#          fi
