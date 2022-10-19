@@ -65,7 +65,7 @@ jobs:
         run: |
           echo "matrix2: ${{ needs.generate-matrix.outputs.matrix-services }}"
           echo "matrix1: ${{ fromJson(needs.generate-matrix.outputs.matrix-services) }}"
-          echo "matrix1: ${{ fromJson(needs.generate-matrix.outputs.matrix-services)[0]['service'] }}"
+          echo "matrix1: ${{ fromJson(needs.generate-matrix.outputs.matrix-services)[0]['project'] }}"
 
   deploy:
     needs: [generate-matrix]
