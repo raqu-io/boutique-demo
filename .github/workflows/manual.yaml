@@ -49,7 +49,7 @@ jobs:
         id: set-matrix
         run: |
           if [[ "${{ inputs.services }}" == "all" ]]; then
-            echo 'SERVICES_MATRIX=[\"adservice\", \"cartservice\", \"checkoutservice\", \"currencyservice\", \"emailservice\", \"frontend\", \"paymentservice\", \"productcatalogservice\", \"recommendationservice\", \"shippingservice\"]' >> $GITHUB_OUTPUT
+            echo 'SERVICES_MATRIX=[{"service": "adservice"}, {"service": "cartservice"}, {"service": "checkoutservice"}, {"service": "currencyservice"}, {"service": "emailservice"}, {"service": "frontend"}, {"service": "paymentservice"}, {"service": "productcatalogservice"}, {"service": "recommendationservice"}, {"service": "shippingservice"}]' >> $GITHUB_OUTPUT
           else
             echo 'SERVICES_MATRIX=["${{ inputs.services }}"]' >> $GITHUB_OUTPUT
           fi
