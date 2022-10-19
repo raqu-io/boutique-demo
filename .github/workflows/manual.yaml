@@ -53,6 +53,15 @@ jobs:
           else
             echo 'SERVICES_MATRIX=["${{ inputs.services }}"]' >> $GITHUB_OUTPUT
           fi
+          exit 0
+  debug:
+    needs: [ generate-matrix ]
+    runs-on: [ ubuntu-latest ]
+    steps:
+      - name: Woop
+        run: |
+          echo "matrix1: ${{ fromJson(needs.generate-matrix.outputs.matrix-services) }}"
+          echo "matrix2: ${{ needs.generate-matrix.outputs.matrix-services }}"
   deploy:
     needs: [generate-matrix]
     runs-on: [ ubuntu-latest ]
