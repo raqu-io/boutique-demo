@@ -57,51 +57,36 @@ jobs:
             echo 'SERVICES_MATRIX=["${{ inputs.services }}"]' >> $GITHUB_OUTPUT
           fi
           exit 0
-  debug:
-    needs: [ generate-matrix ]
-    runs-on: [ ubuntu-latest ]
-    steps:
-      - name: Woop
-        run: |
-          echo "matrix2: ${{ needs.generate-matrix.outputs.matrix-services }}"
-          echo "matrix1: ${{ fromJson(needs.generate-matrix.outputs.matrix-services) }}"
-          echo "matrix1: ${{ fromJson(needs.generate-matrix.outputs.matrix-services)[0]['project'] }}"
-
   deploy:
-    needs: [generate-matrix]
     runs-on: [ ubuntu-latest ]
+    container:
+      image: raquio/deployer:latest
+      options: --user root
     strategy:
-      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix-services) }}
-      fail-fast: true
+      matrix:
+        service: [ "adservice", "cartservice", "checkoutservice", "currencyservice", "emailservice", "frontend", "paymentservice", "productcatalogservice", "recommendationservice", "shippingservice" ]
+    if: ${{ inputs.services }} == all || ${{ matrix.service }} == ${{ inputs.service}}
     steps:
-      - name: Woop
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.PACK_REGISTRY_DEPLOY_KEY }}
+      - name: deploy
+        timeout-minutes: 10
         run: |
-          echo "matrix: ${{ matrix.project }}"
-#  deploy:
-#    runs-on: [ ubuntu-latest ]
-#    container:
-#      image: raquio/deployer:latest
-#      options: --user root
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v3
-#      - name: Setup SSH
-#        uses: webfactory/ssh-agent@v0.5.4
-#        with:
-#          ssh-private-key: ${{ secrets.PACK_REGISTRY_DEPLOY_KEY }}
-#      - name: deploy
-#        timeout-minutes: 10
-#        run: |
+          echo "${{ matrix.service }}"
 #          git config --global --add safe.directory /__w/boutique-demo/boutique-demo
-#          deployer --conf src/${{ inputs.service }}/deploy/common.hcl \
-#                   --conf src/${{ inputs.service }}/deploy/prod.hcl \
+#          deployer --conf src/${{ matrix.service }}/deploy/common.hcl \
+#                   --conf src/${{ matrix.service }}/deploy/prod.hcl \
 #                   --nomad-addr ${{ secrets.NOMAD_ADDR }} \
 #                   --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
 #                   --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
 #                   --extra-vars="--var=service_version=${{ inputs.tag }}"
 #
-#          if [ "${{ inputs.service }}" == "cartservice" ]; then
-#            deployer --conf src/${{ inputs.service }}/deploy/redis.hcl \
+#          if [ "${{ matrix.service }}" == "cartservice" ]; then
+#            deployer --conf src/${{ matrix.service }}/deploy/redis.hcl \
 #                             --nomad-addr ${{ secrets.NOMAD_ADDR }} \
 #                             --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
 #                             --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }}
