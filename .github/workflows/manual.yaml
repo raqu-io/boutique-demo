@@ -43,11 +43,13 @@ jobs:
     name: Generate job matrices
     runs-on: ubuntu-latest
     outputs:
-      matrix-services: ${{ steps.set-matrix.outputs.SERVICES_MATRIX }}
+      matrix-services: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Generate matrix | Services
         id: set-matrix
         run: |
+          echo "::set-output name=matrix::[{\"project\":\"foo\",\"config\":\"Debug\"},{\"project\":\"bar\",\"config\":\"Release\"}]"
+
           if [[ "${{ inputs.services }}" == "all" ]]; then
             echo 'SERVICES_MATRIX=[{"service": "adservice"}, {"service": "cartservice"}, {"service": "checkoutservice"}, {"service": "currencyservice"}, {"service": "emailservice"}, {"service": "frontend"}, {"service": "paymentservice"}, {"service": "productcatalogservice"}, {"service": "recommendationservice"}, {"service": "shippingservice"}]' >> $GITHUB_OUTPUT
           else
@@ -71,7 +73,7 @@ jobs:
     steps:
       - name: Woop
         run: |
-          echo "matrix: ${{ matrix.service }}"
+          echo "matrix: ${{ matrix.project }}"
 #  deploy:
 #    runs-on: [ ubuntu-latest ]
 #    container:
