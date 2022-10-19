@@ -39,32 +39,56 @@ on:
           - shippingservice
 
 jobs:
-  deploy:
-    runs-on: [ ubuntu-latest ]
-    container:
-      image: raquio/deployer:latest
-      options: --user root
+  generate-matrix:
+    name: Generate job matrices
+    runs-on: ubuntu-latest
+    outputs:
+      matrix-services: ${{ steps.set-matrix.outputs.SERVICES_MATRIX }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.PACK_REGISTRY_DEPLOY_KEY }}
-      - name: deploy
-        timeout-minutes: 10
+      - name: Generate matrix | Services
+        id: set-matrix
         run: |
-          git config --global --add safe.directory /__w/boutique-demo/boutique-demo
-          deployer --conf src/${{ inputs.service }}/deploy/common.hcl \
-                   --conf src/${{ inputs.service }}/deploy/prod.hcl \
-                   --nomad-addr ${{ secrets.NOMAD_ADDR }} \
-                   --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
-                   --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
-                   --extra-vars="--var=service_version=${{ inputs.tag }}"
-
-          if [ "${{ inputs.service }}" == "cartservice" ]; then
-            deployer --conf src/${{ inputs.service }}/deploy/redis.hcl \
-                             --nomad-addr ${{ secrets.NOMAD_ADDR }} \
-                             --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
-                             --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }}
+          if "${{ input.service }}" == "all"; then
+            echo 'SERVICES_MATRIX=["adservice", "cartservice", "checkoutservice", "currencyservice", "emailservice", "frontend", "paymentservice", "productcatalogservice", "recommendationservice", "shippingservice"]' >> $GITHUB_OUTPUT
+          else
+            echo 'SERVICES_MATRIX=["${{ input.service }}"]' >> $GITHUB_OUTPUT
           fi
+  deploy:
+    needs: [generate-matrix]
+    runs-on: [ ubuntu-latest ]
+    strategy:
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix-services) }}
+      fail-fast: true
+    steps:
+      - name: Woop
+        run: |
+          echo "matrix: ${{ matrix.service }}"
+#  deploy:
+#    runs-on: [ ubuntu-latest ]
+#    container:
+#      image: raquio/deployer:latest
+#      options: --user root
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#      - name: Setup SSH
+#        uses: webfactory/ssh-agent@v0.5.4
+#        with:
+#          ssh-private-key: ${{ secrets.PACK_REGISTRY_DEPLOY_KEY }}
+#      - name: deploy
+#        timeout-minutes: 10
+#        run: |
+#          git config --global --add safe.directory /__w/boutique-demo/boutique-demo
+#          deployer --conf src/${{ inputs.service }}/deploy/common.hcl \
+#                   --conf src/${{ inputs.service }}/deploy/prod.hcl \
+#                   --nomad-addr ${{ secrets.NOMAD_ADDR }} \
+#                   --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
+#                   --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
+#                   --extra-vars="--var=service_version=${{ inputs.tag }}"
+#
+#          if [ "${{ inputs.service }}" == "cartservice" ]; then
+#            deployer --conf src/${{ inputs.service }}/deploy/redis.hcl \
+#                             --nomad-addr ${{ secrets.NOMAD_ADDR }} \
+#                             --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
+#                             --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }}
+#          fi
