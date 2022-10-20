@@ -123,12 +123,14 @@ jobs:
                      --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
                      --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
                      --stub="-pr${{ github.event.pull_request.number }}" \
-                     --extra-vars="--var=service_version=${{ needs.init.outputs.tag }}"
+                     --extra-vars="--var=service_version=${{ needs.init.outputs.tag }}" \
+                     --update-registry --auto-promote
 
             if [ "${{ matrix.service }}" == "cartservice" ]; then
               deployer --conf src/${{ matrix.service }}/deploy/redis.hcl \
                                --nomad-addr ${{ secrets.NOMAD_ADDR }} \
                                --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
                                --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
-                               --stub="-pr${{ github.event.pull_request.number }}"
+                               --stub="-pr${{ github.event.pull_request.number }}" \
+                               --update-registry --auto-promote
             fi
