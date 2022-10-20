@@ -86,7 +86,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-single-buildx-${{ github.sha }}
+          key: ${{ runner.os }}-single-buildx
           restore-keys: |
             ${{ runner.os }}-single-buildx
 
@@ -133,11 +133,30 @@ jobs:
                    --nomad-addr ${{ secrets.NOMAD_ADDR }} \
                    --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
                    --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
-                   --extra-vars="--var=service_version=${{ needs.generate-release.outputs.tag }}"
+                   --extra-vars="--var=service_version=${{ needs.generate-release.outputs.tag }}" \
+                   --update-registry
 
           if [ "${{ matrix.service }}" == "cartservice" ]; then
             deployer --conf src/${{ matrix.service }}/deploy/redis.hcl \
                              --nomad-addr ${{ secrets.NOMAD_ADDR }} \
                              --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
-                             --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }}
+                             --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
+                             --update-registry --auto-promote
           fi
+  promote:
+    needs: [ deploy ]
+    runs-on: [ ubuntu-latest ]
+    environment:
+      name: production
+      url: https://frontend.dev.thecheese.company
+    container:
+      image: raquio/deployer:latest
+      options: --user root
+    strategy:
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix-services) }}
+      fail-fast: true
+    if: ${{ fromJson(needs.generate-matrix.outputs.matrix-services).include[0] }}
+    steps:
+      - name: promote
+        run:
+          nomad job promote -address ${{ secrets.NOMAD_ADDR }} ${{ matrix.service }}
