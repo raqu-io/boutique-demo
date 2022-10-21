@@ -157,6 +157,15 @@ jobs:
       fail-fast: true
     if: ${{ fromJson(needs.generate-matrix.outputs.matrix-services).include[0] }}
     steps:
+      - name: Checkout
+          uses: actions/checkout@v3
+            - name: Setup SSH
+              uses: webfactory/ssh-agent@v0.5.4
+              with:
+                ssh-private-key: ${{ secrets.PACK_REGISTRY_DEPLOY_KEY }}
       - name: promote
         run:
-          nomad job promote -address ${{ secrets.NOMAD_ADDR }} ${{ matrix.service }}
+          deployer --conf src/${{ matrix.service }}/deploy/common.hcl \
+          --conf src/${{ matrix.service }}/deploy/prod.hcl \
+          --nomad-addr ${{ secrets.NOMAD_ADDR }} \
+          --promote-job
