@@ -29,7 +29,7 @@ jobs:
       options: --user root
     strategy:
       matrix:
-        service: ["adservice", "cartservice", "checkoutservice", "currencyservice", "emailservice", "frontend", "paymentservice", "productcatalogservice", "recommendationservice", "shippingservice"]
+        service: ["ad", "cart", "checkout", "currency", "email", "frontend", "payment", "product-catalog", "recommendation", "shipping"]
     steps:
       -
         name: cleanup
