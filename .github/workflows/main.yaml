@@ -160,11 +160,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.PACK_REGISTRY_DEPLOY_KEY }}
-
       - name: promote
         run: |
           deployer --conf src/${{ matrix.service }}/deploy/common.hcl \

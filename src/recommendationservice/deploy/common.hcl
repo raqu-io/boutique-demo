@@ -5,8 +5,3 @@ service_repo    = "raquio/recommendationservice"
 upstreams = {
     "product-catalog" = 5051
 }
-
-
-
-
-
