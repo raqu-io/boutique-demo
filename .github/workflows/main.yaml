@@ -144,7 +144,7 @@ jobs:
                              --update-registry --auto-promote
           fi
   promote:
-    needs: [ deploy ]
+    needs: [ generate-matrix, deploy ]
     runs-on: [ ubuntu-latest ]
     environment:
       name: production
