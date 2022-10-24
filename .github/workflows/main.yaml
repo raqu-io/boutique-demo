@@ -134,7 +134,7 @@ jobs:
                    --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
                    --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
                    --extra-vars="--var=service_version=${{ needs.generate-release.outputs.tag }}" \
-                   --update-registry
+                   --update-registry --deploy-type progressive
 
           if [ "${{ matrix.service }}" == "cartservice" ]; then
             deployer --conf src/${{ matrix.service }}/deploy/redis.hcl \
@@ -143,26 +143,26 @@ jobs:
                              --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
                              --update-registry --auto-promote
           fi
-  promote:
-    needs: [ generate-matrix, deploy ]
-    runs-on: [ ubuntu-latest ]
-    environment:
-      name: production
-      url: https://frontend.dev.thecheese.company
-    container:
-      image: raquio/deployer:latest
-      options: --user root
-    strategy:
-      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix-services) }}
-      fail-fast: true
-    if: ${{ fromJson(needs.generate-matrix.outputs.matrix-services).include[0] }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: promote
-        run: |
-          deployer --conf src/${{ matrix.service }}/deploy/common.hcl \
-          --conf src/${{ matrix.service }}/deploy/prod.hcl \
-          --nomad-addr ${{ secrets.NOMAD_ADDR }} \
-          --promote-job
+#  promote:
+#    needs: [ generate-matrix, deploy ]
+#    runs-on: [ ubuntu-latest ]
+#    environment:
+#      name: production
+#      url: https://frontend.dev.thecheese.company
+#    container:
+#      image: raquio/deployer:latest
+#      options: --user root
+#    strategy:
+#      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix-services) }}
+#      fail-fast: true
+#    if: ${{ fromJson(needs.generate-matrix.outputs.matrix-services).include[0] }}
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#
+#      - name: promote
+#        run: |
+#          deployer --conf src/${{ matrix.service }}/deploy/common.hcl \
+#          --conf src/${{ matrix.service }}/deploy/prod.hcl \
+#          --nomad-addr ${{ secrets.NOMAD_ADDR }} \
+#          --promote-job
