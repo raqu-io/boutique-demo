@@ -4,3 +4,7 @@ resources = {
   cpu    = 100
   memory = 128
 }
+
+env_vars = {
+  EXTRA_LATENCY = "10ms"
+}
