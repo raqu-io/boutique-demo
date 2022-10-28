@@ -5,6 +5,6 @@ resources = {
   memory = 128
 }
 
-env_vars {
+env_vars = {
   EXTRA_LATENCY = "100ms"
 }
