@@ -6,5 +6,5 @@ resources = {
 }
 
 env_vars = {
-  EXTRA_LATENCY = "10ms"
+  EXTRA_LATENCY = "50ms"
 }
