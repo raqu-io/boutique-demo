@@ -125,7 +125,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.PACK_REGISTRY_DEPLOY_KEY }}
       - name: deploy
-        timeout-minutes: 10
+        timeout-minutes: 20
         run: |
           git config --global --add safe.directory /__w/boutique-demo/boutique-demo
           deployer --conf src/${{ matrix.service }}/deploy/common.hcl \
