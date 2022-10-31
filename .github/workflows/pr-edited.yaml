@@ -118,19 +118,15 @@ jobs:
             git config --global --add safe.directory /__w/boutique-demo/boutique-demo
             TAG="sha-$(git rev-parse --short HEAD)"
             deployer --conf src/${{ matrix.service }}/deploy/common.hcl \
-                     --conf src/${{ matrix.service }}/deploy/dev.hcl \
-                     --nomad-addr ${{ secrets.NOMAD_ADDR }} \
-                     --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
+                     --conf src/${{ matrix.service }}/deploy/prod.hcl \
+                     --platform-domain ${{ secrets.PLATFORM_DOMAIN }} \
                      --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
-                     --stub="-pr${{ github.event.pull_request.number }}" \
                      --extra-vars="--var=service_version=${{ needs.init.outputs.tag }}" \
-                     --update-registry --auto-promote
+                     --update-registry --deploy-type progressive
 
             if [ "${{ matrix.service }}" == "cartservice" ]; then
               deployer --conf src/${{ matrix.service }}/deploy/redis.hcl \
-                               --nomad-addr ${{ secrets.NOMAD_ADDR }} \
-                               --consul-addr ${{ secrets.CONSUL_HTTP_ADDR }} \
+                               --platform-domain ${{ secrets.PLATFORM_DOMAIN }} \
                                --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
-                               --stub="-pr${{ github.event.pull_request.number }}" \
                                --update-registry --auto-promote
             fi
