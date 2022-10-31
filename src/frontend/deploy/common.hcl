@@ -1,4 +1,4 @@
-service_name      = "frontend"
+service_name      = "shop"
 service_protocol  = "http"
 service_port      = 8080
 service_repo      = "raquio/frontend"
