@@ -65,7 +65,7 @@ jobs:
                      --platform-domain ${{ secrets.PLATFORM_DOMAIN }} \
                      --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
                      --extra-vars="--var=service_version=${{ needs.generate-release.outputs.tag }}" \
-                     --update-registry --deploy-type progressive
+                     --update-registry --auto-promote
 
             if [ "${{ matrix.service }}" == "cartservice" ]; then
               deployer --conf src/${{ matrix.service }}/deploy/redis.hcl \
