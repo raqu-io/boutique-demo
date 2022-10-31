@@ -130,6 +130,7 @@ jobs:
           git config --global --add safe.directory /__w/boutique-demo/boutique-demo
           deployer --conf src/${{ matrix.service }}/deploy/common.hcl \
                    --conf src/${{ matrix.service }}/deploy/prod.hcl \
+                   --deploy-config src/${{ matrix.service }}/deploy/deploy_config.json \
                    --platform-domain ${{ secrets.PLATFORM_DOMAIN }} \
                    --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
                    --extra-vars="--var=service_version=${{ needs.generate-release.outputs.tag }}" \
