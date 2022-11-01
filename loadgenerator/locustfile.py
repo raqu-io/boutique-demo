@@ -72,7 +72,7 @@ class UserBehavior(TaskSet):
     tasks = {index: 1,
         setCurrency: 2,
         browseProduct: 10,
-        addToCart: 2,
+        addToCart: 1,
         viewCart: 3,
         checkout: 1}
 
