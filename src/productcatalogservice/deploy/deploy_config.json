@@ -19,7 +19,7 @@
       {
         "name": "request-duration",
         "min": 0,
-        "max": 1500
+        "max": 3500
       }
     ]
   }
