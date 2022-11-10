@@ -17,6 +17,18 @@ name: "Manual Release"
 on:
   workflow_dispatch:
     inputs:
+      regions:
+        description: 'Region to be deployed'
+        required: true
+        default: 'london'
+        type: choice
+        options:
+          - london
+          - sydney
+      namespace:
+        description: 'Namespace to use for application'
+        required: true
+        default: 'demo'
       tag:
         description: 'Tag version for services to be deployed'
         required: true
@@ -38,7 +50,6 @@ on:
           - productcatalogservice
           - recommendationservice
           - shippingservice
-
 jobs:
   deploy:
     runs-on: [ ubuntu-latest ]
@@ -71,6 +82,7 @@ jobs:
               deployer --conf src/${{ matrix.service }}/deploy/redis.hcl \
                                --platform-domain ${{ secrets.PLATFORM_DOMAIN }} \
                                --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
+                               --extra-vars="--var=namespace=${{ inputs.namespace }}" \
                                --update-registry --auto-promote
             fi
           fi
