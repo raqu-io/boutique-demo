@@ -1,6 +1,6 @@
 service_count   = 1
 
 resources = {
-    cpu    = 100
-    memory = 128
+    cpu    = 50
+    memory = 64
 }

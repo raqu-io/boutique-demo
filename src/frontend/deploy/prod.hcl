@@ -1,6 +1,6 @@
-service_count     = 3
+service_count     = 2
 
 resources = {
-    cpu    = 100
-    memory = 256
+    cpu    = 50
+    memory = 128
 }

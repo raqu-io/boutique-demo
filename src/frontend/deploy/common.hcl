@@ -15,6 +15,5 @@ upstreams = {
 }
 
 env_vars = {
-    "ENV_PLATFORM" = "local"
-    "CYMBAL_BRANDING" = "TRUE"
+    "ENV_PLATFORM" = "nomad"
 }
