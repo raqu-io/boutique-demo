@@ -76,13 +76,13 @@ jobs:
                      --platform-domain ${{ secrets.PLATFORM_DOMAIN }} \
                      --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
                      --extra-vars="--var=service_version=${{ inputs.tag }}" \
-                     --update-registry --auto-promote
+                     --update-registry --auto-promote --namespace="${{ inputs.namespace }}"
 
             if [ "${{ matrix.service }}" == "cartservice" ]; then
               deployer --conf src/${{ matrix.service }}/deploy/redis.hcl \
                                --platform-domain ${{ secrets.PLATFORM_DOMAIN }} \
                                --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
-                               --extra-vars="--var=namespace=${{ inputs.namespace }}" \
+                               --namespace="${{ inputs.namespace }}" \
                                --update-registry --auto-promote
             fi
           fi

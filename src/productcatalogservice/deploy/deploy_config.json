@@ -1,6 +1,7 @@
 {
   "release": {
   "name": "product-catalog",
+  "namespace": "demo",
   "strategy": {
     "type": "canary",
     "config":{
