@@ -40,7 +40,7 @@ type platformDetails struct {
 }
 
 var (
-	isCymbalBrand = "true" == strings.ToLower(os.Getenv("CYMBAL_BRANDING"))
+	isCymbalBrand = true
 	templates     = template.Must(template.New("").
 			Funcs(template.FuncMap{
 			"renderMoney":        renderMoney,
