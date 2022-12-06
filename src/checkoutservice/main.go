@@ -61,22 +61,20 @@ func init() {
 
 func randomExit() {
 	minDelay := 30
-	if os.Getenv("ENABLE_RANDOM_KILL") != "" {
-		if os.Getenv("RANDOM_KILL_DELAY") != "" {
-			delay, err := strconv.Atoi(os.Getenv("RANDOM_KILL_DELAY"))
-			if err != nil {
-				log.Fatal(err)
-				os.Exit(1)
-			}
-			log.Info("Random kill enabled on %i seconds", delay + minDelay)
-			// Generate a random duration between 30 and 90 seconds
-			rand.Seed(time.Now().UnixNano())
-			duration := time.Duration(rand.Intn(delay) + minDelay) * time.Second
-
-			// Wait for the duration, then exit the program
-			<-time.After(duration)
+	if os.Getenv("RANDOM_KILL_DELAY") != "" {
+		delay, err := strconv.Atoi(os.Getenv("RANDOM_KILL_DELAY"))
+		if err != nil {
+			log.Fatal(err)
 			os.Exit(1)
 		}
+		log.Info("Random kill enabled on %i seconds", delay + minDelay)
+		// Generate a random duration between 30 and 90 seconds
+		rand.Seed(time.Now().UnixNano())
+		duration := time.Duration(rand.Intn(delay) + minDelay) * time.Second
+
+		// Wait for the duration, then exit the program
+		<-time.After(duration)
+		os.Exit(1)
 	}
 }
 
