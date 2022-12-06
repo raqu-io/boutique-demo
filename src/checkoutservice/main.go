@@ -71,14 +71,14 @@ func randomExit() {
 			}
 		}
 		log.Info("Random kill enabled on %i seconds", delay + minDelay)
-	}
-	// Generate a random duration between 30 and 90 seconds
-	rand.Seed(time.Now().UnixNano())
-	duration := time.Duration(rand.Intn(delay) + minDelay) * time.Second
+		// Generate a random duration between 30 and 90 seconds
+		rand.Seed(time.Now().UnixNano())
+		duration := time.Duration(rand.Intn(delay) + minDelay) * time.Second
 
-	// Wait for the duration, then exit the program
-	<-time.After(duration)
-	os.Exit(1)
+		// Wait for the duration, then exit the program
+		<-time.After(duration)
+		os.Exit(1)
+	}
 }
 
 type checkoutService struct {
