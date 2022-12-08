@@ -74,10 +74,8 @@ func memoryLeak() {
 			var memStats runtime.MemStats
 			runtime.ReadMemStats(&memStats)
 
-			// Print the current memory usage
-			log.Info("Alloc = %v MB", memStats.Alloc / 1024 / 1024)
-			// Sleep for 1 second
-			time.Sleep(3 * time.Second)
+			// Sleep
+			time.Sleep(5 * time.Second)
 		}
 	}
 }
