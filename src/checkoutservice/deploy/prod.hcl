@@ -6,7 +6,7 @@ resources = {
 }
 
 env_vars = {
-    "ENABLE_MEMORY_LEAK" = "true"
+    "ENABLE_MEMORY_LEAK" = "1"
 }
 
 
