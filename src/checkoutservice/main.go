@@ -74,8 +74,10 @@ func memoryLeak() {
 			var memStats runtime.MemStats
 			runtime.ReadMemStats(&memStats)
 
-			// Sleep
-			time.Sleep(5 * time.Second)
+			// Sleep a random interval between 5-10 secs
+			rand.Seed(time.Now().UnixNano())
+			duration := time.Duration(rand.Intn(5) + 5) * time.Second
+			time.Sleep(duration)
 		}
 	}
 }
