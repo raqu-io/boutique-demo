@@ -59,6 +59,20 @@ func init() {
 	log.Out = os.Stdout
 }
 
+func memoryLeak() {
+	if os.Getenv("ENABLE_MEMORY_LEAK") != "" {
+		log.Info("Memory leak enabled at ~1MB/sec")
+		for {
+			// Allocate 1MB of memory
+			x := make([]byte, 1024*1024)
+			// Do something with the allocated memory to prevent it from being optimized away
+			x[0] = 1
+			// Sleep for 1 second
+			time.Sleep(1 * time.Second)
+		}
+	}
+}
+
 func randomExit() {
 	minDelay := 30
 	if os.Getenv("RANDOM_KILL_DELAY") != "" {
@@ -103,6 +117,7 @@ func main() {
 	}
 
 	go randomExit()
+	go memoryLeak()
 
 	port := listenPort
 	if os.Getenv("PORT") != "" {
