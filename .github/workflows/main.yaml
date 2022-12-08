@@ -51,7 +51,7 @@ jobs:
     steps:
       - name: Generate matrix | Services
         id: services
-        uses: hellofresh/action-changed-files@v2.1
+        uses: hellofresh/action-changed-files@v3
         with:
           pattern: src/(?P<service>[^/]+)
   build-images:
