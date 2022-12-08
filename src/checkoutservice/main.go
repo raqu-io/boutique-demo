@@ -20,6 +20,7 @@ import (
 	"math/rand"
 	"net"
 	"os"
+	"runtime"
 	"strconv"
 	"time"
 
@@ -62,11 +63,19 @@ func init() {
 func memoryLeak() {
 	if os.Getenv("ENABLE_MEMORY_LEAK") != "" {
 		log.Info("Memory leak enabled at ~1MB/sec")
+		// Allocate 1MB of memory
+		x := make([]byte, 1<<20)
 		for {
-			// Allocate 1MB of memory
-			x := make([]byte, 1024*1024)
 			// Do something with the allocated memory to prevent it from being optimized away
-			x[0] = 1
+			y := make([]byte, 1<<20)
+			x = append(x, y...)
+
+			// Get the current memory stats
+			var memStats runtime.MemStats
+			runtime.ReadMemStats(&memStats)
+
+			// Print the current memory usage
+			log.Info("Alloc = %v MB", memStats.Alloc / 1024 / 1024)
 			// Sleep for 1 second
 			time.Sleep(1 * time.Second)
 		}
