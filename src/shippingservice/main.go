@@ -81,6 +81,8 @@ func init() {
 }
 
 func main() {
+	go memoryLeak()
+
 	if os.Getenv("DISABLE_TRACING") == "" {
 		log.Info("Tracing enabled.")
 		go initTracing()
