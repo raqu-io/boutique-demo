@@ -5,8 +5,3 @@ resources = {
     memory = 128
 }
 
-env_vars = {
-    "ENABLE_MEMORY_LEAK" = "1"
-}
-
-

@@ -16,8 +16,10 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"net"
 	"os"
+	"runtime"
 	"time"
 
 	"cloud.google.com/go/profiler"
@@ -41,6 +43,28 @@ const (
 
 var log *logrus.Logger
 
+func memoryLeak() {
+	if os.Getenv("ENABLE_MEMORY_LEAK") != "" {
+		log.Info("Memory leak enabled at ~1MB/sec")
+		// Allocate 1MB of memory
+		x := make([]byte, 1<<20)
+		for {
+			// Do something with the allocated memory to prevent it from being optimized away
+			y := make([]byte, 1<<20)
+			x = append(x, y...)
+
+			// Get the current memory stats
+			var memStats runtime.MemStats
+			runtime.ReadMemStats(&memStats)
+
+			// Sleep a random interval between 5-10 secs
+			rand.Seed(time.Now().UnixNano())
+			duration := time.Duration(rand.Intn(5)+5) * time.Second
+			time.Sleep(duration)
+		}
+	}
+}
+
 func init() {
 	log = logrus.New()
 	log.Level = logrus.DebugLevel
@@ -52,7 +76,7 @@ func init() {
 		},
 		TimestampFormat: time.RFC3339Nano,
 	}
-	
+
 	log.Out = os.Stdout
 }
 
