@@ -21,12 +21,6 @@
           "name": "request-duration",
           "min": 0,
           "max": 3500
-        },
-        {
-          "name": "credit-card-failures",
-          "query": "sum(payment-service.transaction.errors[30s])",
-          "min": 0,
-          "max": 3500
         }
       ]
     }

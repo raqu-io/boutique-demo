@@ -82,7 +82,7 @@ func memoryLeak() {
 			y := make([]byte, 1<<20)
 			x = append(x, y...)
 
-			// Sleep a random interval between 20-10 secs
+			// Sleep a random interval between 20-30 secs
 			rand.Seed(time.Now().UnixNano())
 			duration := time.Duration(rand.Intn(10)+20) * time.Second
 			time.Sleep(duration)
