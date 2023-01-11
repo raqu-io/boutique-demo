@@ -24,7 +24,6 @@ import (
 	"net"
 	"os"
 	"os/signal"
-	"runtime"
 	"strings"
 	"sync"
 	"syscall"
@@ -83,13 +82,9 @@ func memoryLeak() {
 			y := make([]byte, 1<<20)
 			x = append(x, y...)
 
-			// Get the current memory stats
-			var memStats runtime.MemStats
-			runtime.ReadMemStats(&memStats)
-
-			// Sleep a random interval between 5-10 secs
+			// Sleep a random interval between 20-10 secs
 			rand.Seed(time.Now().UnixNano())
-			duration := time.Duration(rand.Intn(5)+5) * time.Second
+			duration := time.Duration(rand.Intn(10)+20) * time.Second
 			time.Sleep(duration)
 		}
 	}
