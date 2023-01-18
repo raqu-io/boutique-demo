@@ -1,0 +1,28 @@
+{
+    "release": {
+        "name": "product-catalog",
+        "namespace": "boutique",
+        "strategy": {
+            "type": "canary",
+            "config": {
+                "interval": "30s",
+                "initial_traffic": 10,
+                "traffic_step": 20,
+                "max_traffic": 100
+            }
+        },
+        "monitor": {
+            "checks": [
+                {
+                    "name": "request-success",
+                    "min": 75
+                },
+                {
+                    "name": "request-duration",
+                    "min": 0,
+                    "max": 3500
+                }
+            ]
+        }
+    }
+}
