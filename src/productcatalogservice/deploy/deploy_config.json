@@ -15,7 +15,7 @@
             "checks": [
                 {
                     "name": "request-success",
-                    "min": 70
+                    "min": 75
                 },
                 {
                     "name": "request-duration",
