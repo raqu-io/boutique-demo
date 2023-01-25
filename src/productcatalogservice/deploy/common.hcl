@@ -8,5 +8,5 @@ service_count = 2
 
 resources = {
   cpu    = 100
-  memory = 65
+  memory = 64
 }
