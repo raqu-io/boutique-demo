@@ -3,7 +3,7 @@ service_port     = 6379
 service_protocol = "tcp"
 service_repo     = "redis"
 service_version  = "alpine"
-service_count    = 1
+service_count    = 2
 
 resources = {
   cpu    = 100
