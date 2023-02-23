@@ -129,10 +129,11 @@ jobs:
         env:
           CONSUL_HTTP_ADDR: "https://consul.${{ secrets.PLATFORM_DOMAIN }}"
           CONSUL_HTTP_TOKEN: "${{ secrets.CONSUL_HTTP_TOKEN }}"
-          NOMAD_HTTP_ADDR: "https://nomad.${{ secrets.PLATFORM_DOMAIN }}"
+          NOMAD_ADDR: "https://nomad.${{ secrets.PLATFORM_DOMAIN }}"
           NOMAD_TOKEN: "${{ secrets.NOMAD_TOKEN }}"
         run: |
           git config --global --add safe.directory /__w/boutique-demo/boutique-demo
+          echo "$NOMAD_TOKEN"
           deployer --conf src/${{ matrix.service }}/deploy/common.hcl \
                    --conf src/${{ matrix.service }}/deploy/prod.hcl \
                    --deploy-config src/${{ matrix.service }}/deploy/deploy_config.json \
