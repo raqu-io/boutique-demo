@@ -68,20 +68,23 @@ jobs:
           ssh-private-key: ${{ secrets.PACK_REGISTRY_DEPLOY_KEY }}
       - name: deploy
         timeout-minutes: 10
+        env:
+          CONSUL_HTTP_ADDR: "https://consul.${{ secrets.PLATFORM_DOMAIN }}"
+          CONSUL_HTTP_TOKEN: "${{ secrets.CONSUL_HTTP_TOKEN }}"
+          NOMAD_HTTP_ADDR: "https://nomad.${{ secrets.PLATFORM_DOMAIN }}"
+          NOMAD_TOKEN: "${{ secrets.NOMAD_TOKEN }}"
         run: |
           if [[ "${{ inputs.services }}" == "all" || "${{ inputs.services }}" == "${{ matrix.service }}" ]]; then
             git config --global --add safe.directory /__w/boutique-demo/boutique-demo
             deployer --conf src/${{ matrix.service }}/deploy/common.hcl \
                      --conf src/${{ matrix.service }}/deploy/prod.hcl \
                      --platform-domain ${{ secrets.PLATFORM_DOMAIN }} \
-                     --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
                      --extra-vars="--var=service_version=${{ inputs.tag }}" \
                      --update-registry --auto-promote --namespace="${{ inputs.namespace }}"
 
             if [ "${{ matrix.service }}" == "cartservice" ]; then
               deployer --conf src/${{ matrix.service }}/deploy/redis.hcl \
                                --platform-domain ${{ secrets.PLATFORM_DOMAIN }} \
-                               --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
                                --namespace="${{ inputs.namespace }}" \
                                --update-registry --auto-promote
             fi

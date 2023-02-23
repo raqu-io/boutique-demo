@@ -37,6 +37,7 @@ jobs:
         env:
           CONSUL_HTTP_ADDR: "https://consul.${{ secrets.PLATFORM_DOMAIN }}"
           NOMAD_HTTP_ADDR: "https://nomad.${{ secrets.PLATFORM_DOMAIN }}"
+          NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }}
         run: |
             nomad stop -purge ${{ matrix.service }}-pr${{ github.event.pull_request.number }}
             consul config delete -kind service-splitter -name ${{ matrix.service }}-pr${{ github.event.pull_request.number }}
