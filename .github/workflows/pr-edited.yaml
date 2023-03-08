@@ -130,5 +130,5 @@ jobs:
                                --platform-domain ${{ secrets.PLATFORM_DOMAIN }} \
                                --consul-token ${{ secrets.CONSUL_HTTP_TOKEN }} \
                                --stub="-pr${{ github.event.pull_request.number }}" \
-                               --update-registry --auto-promote
+                               --update-registry --auto-promote --version alpine
             fi

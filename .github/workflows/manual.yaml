@@ -86,6 +86,6 @@ jobs:
             if [ "${{ matrix.service }}" == "cartservice" ]; then
               deployer --conf src/${{ matrix.service }}/deploy/redis.hcl \
                                --namespace="${{ inputs.namespace }}" \
-                               --update-registry --auto-promote --deploy-type canary
+                               --update-registry --auto-promote --deploy-type canary --version alpine
             fi
           fi

@@ -143,7 +143,7 @@ jobs:
 
           if [ "${{ matrix.service }}" == "cartservice" ]; then
             deployer --conf src/${{ matrix.service }}/deploy/redis.hcl \
-                             --update-registry --auto-promote
+                             --update-registry --auto-promote --version alpine
           fi
 #  promote:
 #    needs: [ generate-matrix, deploy ]
