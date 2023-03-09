@@ -73,7 +73,7 @@ func init() {
 }
 
 func memoryLeak() {
-	if os.Getenv("ENABLE_MEMORY_LEAK") != "" {
+	if os.Getenv("ENABLE_MEMORY_LEAK") != "" && os.Getenv("ENABLE_MEMORY_LEAK") == "1" {
 		log.Info("Memory leak enabled at ~1MB/sec")
 		// Sleep a random interval between 0-90 secs to start the memory leak (so different instances will be restarted at different times)
 		rand.Seed(time.Now().UnixNano())

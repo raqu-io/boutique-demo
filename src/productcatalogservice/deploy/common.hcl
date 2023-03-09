@@ -13,4 +13,5 @@ resources = {
 }
 
 env_vars = {
+  ENABLE_MEMORY_LEAK = "1"
 }
